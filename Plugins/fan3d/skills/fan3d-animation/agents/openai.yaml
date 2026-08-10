@@ -1,0 +1,6 @@
+interface:
+  display_name: "Fan3D Animation"
+  short_description: "Create, edit, validate, and render Fan3D projects"
+  icon_small: "./assets/fan3d-small.png"
+  icon_large: "./assets/fan3d.png"
+  default_prompt: "Use Fan3D tools to inspect and safely edit a local 3D animation project, then preview and validate the result."

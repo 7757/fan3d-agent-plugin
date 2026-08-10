@@ -1,15 +1,45 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fan3d",
-  "version": "0.1.0",
-  "description": "Use deterministic local Fan3D tools to inspect, edit, preview, validate, and render 3D animation projects.",
+  "version": "0.1.1",
+  "description": "Inspect, edit, preview, validate, and render local Fan3D 3D animation projects.",
   "author": {
-    "name": "Fan3D"
+    "name": "Zhenjiang Xingfan Technology Co.,Ltd",
+    "url": "https://3d.fandcode.com/"
   },
+  "homepage": "https://3d.fandcode.com/",
+  "repository": "https://github.com/7757/fan3d-agent-plugin",
   "keywords": [
+    "fan3d",
     "3d",
     "animation",
-    "design",
-    "rendering"
-  ]
+    "macos",
+    "rendering",
+    "mcp"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Fan3D",
+        "shortDescription": "Create and render 3D product animations",
+        "longDescription": "Inspect, edit, preview, validate, and render local Fan3D 3D animation projects with deterministic tools backed by the native macOS app.",
+        "developerName": "Zhenjiang Xingfan Technology Co.,Ltd",
+        "category": "Creativity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "websiteURL": "https://3d.fandcode.com/",
+        "defaultPrompt": [
+          "Inspect a local Fan3D project and summarize its scene, revision, and validation state.",
+          "Edit a Fan3D project, render a preview, and verify the result.",
+          "Render a final Fan3D animation and report job progress and output."
+        ],
+        "brandColor": "#7C5CFF",
+        "composerIcon": "./assets/composer-icon.png",
+        "logo": "./assets/logo.png",
+        "logoDark": "./assets/logo-dark.png"
+      }
+    }
+  }
 }
