@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "fan3d",
+  "version": "0.1.0",
+  "description": "Use deterministic local Fan3D tools to inspect, edit, preview, validate, and render 3D animation projects.",
+  "author": {
+    "name": "Fan3D"
+  },
+  "keywords": [
+    "3d",
+    "animation",
+    "design",
+    "rendering"
+  ]
+}

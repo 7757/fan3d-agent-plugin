@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -eu
+
+fan3d_cli_path="/Applications/Fan3D.app/Contents/Helpers/fan3d"
+
+if [ "$#" -ne 0 ]; then
+  printf '%s\n' 'The Fan3D Agent Plugin launcher does not accept arguments.' >&2
+  exit 64
+fi
+
+if [ ! -x "$fan3d_cli_path" ]; then
+  printf '%s\n' \
+    'Fan3D MCP requires Fan3D.app to be installed in /Applications.' >&2
+  exit 127
+fi
+
+exec "$fan3d_cli_path" mcp serve
