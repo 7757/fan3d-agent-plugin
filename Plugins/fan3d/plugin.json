@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fan3d",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Inspect, edit, preview, validate, and render local Fan3D 3D animation projects.",
   "author": {
     "name": "Zhenjiang Xingfan Technology Co.,Ltd",
