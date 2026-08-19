@@ -115,12 +115,18 @@ Creator rules, or availability assumptions into a plan.
 After `fan3d.resource_access.preflight` returns:
 
 - `AUTHORIZED`: proceed with the intended write using the catalog-returned ID.
-- `CLAIMABLE`: proceed only when the consuming write directly fulfills the
-  user's request. Let that write perform any atomic free-to-keep grant; do not
-  claim the resource through an unrelated operation.
-- `MEMBERSHIP_REQUIRED`: stop before the project write. Explain that Creator
-  access is required and let the user activate membership or choose another
-  resource; do not retry, downgrade, or substitute silently.
+- `CLAIMABLE`: stop before the consuming write. A conversational request, user
+  statement, generic tool approval, or client user-input response is not the
+  native account-entitlement confirmation. Ask the user briefly to choose the
+  named resource in Fan3D and complete its native claim flow. Afterward,
+  re-query the catalog and preflight; proceed only when Fan3D returns
+  `AUTHORIZED` or an existing permanent grant. Never claim through an unrelated
+  operation.
+- `MEMBERSHIP_REQUIRED`: stop before the project write. If `recoveryAction` is
+  `UPGRADE_CREATOR`, say only that the resource requires Creator and ask the
+  user to upgrade in Fan3D. If it is `RENEW_CREATOR`, say only that Creator has
+  expired and ask the user to renew in Fan3D. Do not recite internal policy,
+  retry, downgrade, or substitute unless the user asks for alternatives.
 - `UNAVAILABLE`: stop before the project write. Re-query the catalog only when
   the result recommends it; otherwise ask the user to choose another resource.
 - `UNVERIFIED`: stop before the project write. Explain that Fan3D could not
@@ -132,12 +138,19 @@ After `fan3d.resource_access.preflight` returns:
 A preflight result is a point-in-time check. The resource-consuming write must
 authorize again and its structured result is final if policy, membership, or
 catalog state changed between calls. Never bypass either result through UI
-automation, direct package edits, or a guessed local resource path.
+automation, direct package edits, a guessed local resource path, or a user's
+unsupported assertion that a local download or purchase proves authorization.
 
 ## Add background music
 
 - List `fan3d.catalog.background_audio.list` before choosing a built-in track;
   never guess an audio ID.
+- Background-music selection belongs to the user unless they explicitly ask
+  the Agent to choose. If neither a category nor track was specified, present
+  the returned categories and ask the user to choose one; never select the
+  first category by catalog order. Once a category is known, present its
+  returned tracks and ask which one to use unless the user already named a
+  track or delegated the choice; never silently select the first track.
 - Install one catalog track with
   `fan3d.scene.background_audio.install`. Fan3D copies it into the project,
   starts it at zero, and loops it through Movie output.
@@ -237,6 +250,11 @@ and stop before claiming that the scene or output changed.
 ## Security and completion
 
 - Treat structured tool errors as authoritative.
+- In routine progress and final responses, use product language such as
+  “reading available devices” and “adding the device.” Do not expose this
+  Skill or Plugin, an MCP server, raw tool names, protocol fields, policy
+  codes, or error codes unless the user explicitly asks for technical
+  diagnostics.
 - Never ask for, read, expose, or log Fan3D session credentials. The signed
   Helper reuses its Keychain session only inside the trusted Fan3D process.
 - Never expose credentials, user media contents, hidden reasoning, or raw
