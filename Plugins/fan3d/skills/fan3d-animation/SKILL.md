@@ -54,6 +54,9 @@ Published tools are grouped by intent:
 - Verification: `fan3d.preview.render` and `fan3d.scene.validate`
 - Output jobs: `fan3d.render.submit`, `fan3d.render.status`,
   `fan3d.render.cancel`, and `fan3d.render.retry`
+- Current-workspace controls, only when the in-app project-scoped server
+  publishes them: `fan3d.workspace.playback.set` and
+  `fan3d.workspace.history.navigate`
 
 `fan3d.project.create` is intentionally unavailable in an in-app,
 project-scoped server. `fan3d.project.list` is also global-only. In a
@@ -73,6 +76,28 @@ On a project-scoped server, the open project is already bound and `projectID`
 is optional. Omit it normally; if supplied, it must match the bound project.
 Start with `fan3d.project.inspect`; do not switch to a different project or
 launch a separate global server behind the user's back.
+
+## Ask for bounded choices
+
+- When the next required step has two or more current, authoritative, finite,
+  user-meaningful alternatives and the user has neither selected one nor
+  delegated the choice, ask with the host's structured-choice capability when
+  it is available. Keep the task active and continue it after the answer.
+- This applies to project or object disambiguation, devices and other catalog
+  resources, presets, background-audio categories and tracks, output variants,
+  and equivalent bounded decisions. Background audio is an example, not a
+  special interaction path.
+- Read the relevant project state or catalog before asking. Show concise human
+  labels and differentiating descriptions while retaining the returned stable
+  IDs for later tool calls. Never present guessed or stale choices.
+- Ask dependent choices in order. For a large result set, narrow it with the
+  published query, pagination, or a higher-level structured choice before
+  presenting individual items.
+- If structured choice is unavailable or cannot represent the bounded result,
+  ask one brief prose question. Do not silently select the first item.
+- Do not use an ordinary choice as native permission, entitlement claim,
+  destructive-operation approval, or project-external file confirmation.
+  Open-ended creative direction may remain conversational.
 
 ## Edit safely
 
@@ -154,11 +179,9 @@ or purchase proves authorization.
 - List `fan3d.catalog.background_audio.list` before choosing a built-in track;
   never guess an audio ID.
 - Background-music selection belongs to the user unless they explicitly ask
-  the Agent to choose. If neither a category nor track was specified, present
-  the returned categories and ask the user to choose one; never select the
-  first category by catalog order. Once a category is known, present its
-  returned tracks and ask which one to use unless the user already named a
-  track or delegated the choice; never silently select the first track.
+  the Agent to choose. Category and track are dependent bounded choices under
+  the general policy above; never select the first category or track by catalog
+  order.
 - Install one catalog track with
   `fan3d.scene.background_audio.install`. Fan3D copies it into the project,
   starts it at zero, and loops it through Movie output.
@@ -169,6 +192,20 @@ or purchase proves authorization.
   MCP. Ask the user to use Fan3D's native file picker for their own audio.
 - Still images and image sequences do not contain audio. Movie output includes
   the current audible background track.
+
+## Control the current workspace
+
+- Treat requests to play, pause, or preview the already-open workspace as
+  playback intent. Use `fan3d.workspace.playback.set` only when it is published.
+  Never submit a Render Job merely to start workspace playback.
+- Treat undo, revert the last step, and redo as History intent. Inspect the
+  current Revision, then use `fan3d.workspace.history.navigate` only when it is
+  published. Report a no-op result honestly when no matching History step
+  exists.
+- These controls are App-session capabilities and may be absent from a global
+  or external Plugin connection. If absent, state that the current connection
+  cannot perform the control and stop; do not simulate a click, press a key,
+  edit the project package, or export as a workaround.
 
 ## Edit device articulations
 
