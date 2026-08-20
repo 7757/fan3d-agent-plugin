@@ -85,16 +85,22 @@ launch a separate global server behind the user's back.
    - Do not infer a target from hover state, UI selection, or visual position.
 2. Query the relevant catalog before selecting a device or preset.
    - Use returned stable IDs. Do not guess catalog identifiers.
+   - Each device catalog entry includes an account-scoped `access` snapshot.
+     Follow that state before writing; catalog discovery and access planning
+     complete in the same read.
    - For an articulation edit, use the selected device catalog resource's
      `articulations` entry to discover its ID, kind, minimum, maximum, and
      default value. Values use the catalog's declared unit; for example,
      `rotationRadians` values are radians.
-3. Preflight each catalog-backed device or template before a consuming write.
-   - Call `fan3d.resource_access.preflight` for the selected stable resource ID
-     and the exact intended operation, following the published input schema.
-   - A catalog result proves only that a resource is installed and
-     discoverable. It is not an entitlement or authorization result.
-   - Follow the returned access-state branches below before writing.
+3. Resolve resource access before a consuming write.
+   - For a device, use the account-scoped `access` object returned on its
+     catalog entry; do not issue a redundant preflight when that state is
+     current and well formed.
+   - Templates and other catalog-backed resources without embedded access must
+     still use `fan3d.resource_access.preflight` with the exact operation.
+   - Use explicit preflight when a workflow requires an operation-specific
+     recheck or after the user has resolved an `UNVERIFIED` state.
+   - Follow the access-state branches below before writing.
 4. Send one bounded intent at a time.
    - Pass the inspected `expectedRevision` and a fresh `requestID`.
    - Use the normalized result and returned revision for the next call.
@@ -106,22 +112,23 @@ launch a separate global server behind the user's back.
      interval until it reaches a terminal state.
    - Report an output URI only after the job succeeds.
 
-## Preflight resource access
+## Resource access
 
-The connected Fan3D server, not this Skill or a cached catalog, decides whether
-the current user may consume a resource. Never hard-code free device IDs,
-Creator rules, or availability assumptions into a plan.
+The connected Fan3D server, not this Skill, decides whether the current user
+may consume a resource. Device catalog access is an account-scoped,
+point-in-time planning snapshot. Never hard-code free device IDs, Creator
+rules, or availability assumptions into a plan.
 
-After `fan3d.resource_access.preflight` returns:
+Follow the `access.eligibility` on a device entry, or `eligibility` from an
+explicit preflight, as follows:
 
 - `AUTHORIZED`: proceed with the intended write using the catalog-returned ID.
 - `CLAIMABLE`: stop before the consuming write. A conversational request, user
   statement, generic tool approval, or client user-input response is not the
   native account-entitlement confirmation. Ask the user briefly to choose the
   named resource in Fan3D and complete its native claim flow. Afterward,
-  re-query the catalog and preflight; proceed only when Fan3D returns
-  `AUTHORIZED` or an existing permanent grant. Never claim through an unrelated
-  operation.
+  re-query the catalog; proceed only when Fan3D returns `AUTHORIZED` or an
+  existing permanent grant. Never claim through an unrelated operation.
 - `MEMBERSHIP_REQUIRED`: stop before the project write. If `recoveryAction` is
   `UPGRADE_CREATOR`, say only that the resource requires Creator and ask the
   user to upgrade in Fan3D. If it is `RENEW_CREATOR`, say only that Creator has
@@ -135,11 +142,12 @@ After `fan3d.resource_access.preflight` returns:
 - Any unknown or malformed state: fail closed and report that authorization
   could not be verified.
 
-A preflight result is a point-in-time check. The resource-consuming write must
-authorize again and its structured result is final if policy, membership, or
-catalog state changed between calls. Never bypass either result through UI
-automation, direct package edits, a guessed local resource path, or a user's
-unsupported assertion that a local download or purchase proves authorization.
+A catalog access snapshot or preflight result is a point-in-time check. The
+resource-consuming write must authorize again and its structured result is
+final if policy, membership, or catalog state changed between calls. Never
+bypass either result through UI automation, direct package edits, a guessed
+local resource path, or a user's unsupported assertion that a local download
+or purchase proves authorization.
 
 ## Add background music
 
@@ -208,7 +216,8 @@ articulation ranges.
   to activate Creator or select another resource. Do not loop retries.
 - On `resource_access_denied`, retry only when `retryable` is true and only
   after following the recovery suggestion and re-running catalog discovery and
-  preflight. A re-planned write uses a fresh `requestID`.
+  access resolution. Use explicit preflight only when the refreshed state or
+  operation requires it. A re-planned write uses a fresh `requestID`.
 - If `projectUnchanged` is false or absent, inspect the project before doing
   anything else. If it is true, do not claim a mutation occurred.
 - Never turn an authorization or capability error into a filesystem edit, UI
@@ -234,8 +243,9 @@ For “create an eight-second iPhone product video with a blue gradient”:
    and `fan3d.project.create` is published. On a project-scoped server, use the
    current bound project.
 2. Inspect the project and list device and gradient catalogs.
-3. Preflight the selected iPhone for the intended add or replace operation and
-   follow its access-state branch.
+3. Read the selected iPhone's account-scoped catalog access and follow its
+   access-state branch; use explicit preflight only when the state requires a
+   recheck.
 4. Add or update the authorized catalog-backed iPhone device as needed.
 5. Apply a catalog-backed blue gradient background.
 6. Set the timeline duration to eight seconds.
