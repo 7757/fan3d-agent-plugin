@@ -264,6 +264,17 @@ articulation ranges.
 
 - Render jobs are persistent local records, not MCP-session handles. A later
   compatible Fan3D process can query the same `jobID` for the same project.
+- Final animation watermarking is owned by the render Application Use Case. It
+  freezes the account entitlement and output kind at submission. Movie output
+  uses a digital watermark; Free or offline-fallback movies also carry the
+  visible `fan3d` mark. Image-sequence and Web output do not use the digital
+  watermark: active Creator output has no watermark, while Free or offline
+  fallback bakes the visible `fan3d` mark into every output frame and remains
+  personal-non-commercial. Never ask for, promise, or attempt a watermark
+  bypass through project edits, output kinds, or output paths.
+- A `resource_fallback_applied` warning at `render_output.license` means the
+  server grant was unavailable and Fan3D safely used the local Free license.
+  Preserve and report that warning without exposing account or watermark IDs.
 - Only `fan3d.render.cancel` requests cancellation. Cancelling a status call or
   stopping the Agent does not cancel the job.
 - Use `fan3d.render.retry` only when the failed or interrupted job reports that
