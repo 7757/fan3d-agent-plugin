@@ -22,7 +22,11 @@ invent a tool that is not published.
 Published tools are grouped by intent:
 
 - Project: `fan3d.project.list`, `fan3d.project.create`,
-  `fan3d.project.inspect`
+  `fan3d.project.create_from_device`, and `fan3d.project.inspect`
+- Installation preferences: `fan3d.preferences.inspect` and
+  `fan3d.preferences.update`
+- Local storage: `fan3d.storage.inspect` and
+  `fan3d.storage.preview_cache.clear`
 - Catalogs: `fan3d.catalog.devices.list`,
   `fan3d.catalog.environment_presets.list`,
   `fan3d.catalog.gradient_presets.list`, and
@@ -49,6 +53,7 @@ Published tools are grouped by intent:
   `fan3d.scene.device_articulation_animation.update_endpoints`,
   `fan3d.scene.camera_animation.move`,
   `fan3d.scene.camera_animation.resize`,
+  `fan3d.scene.camera_animation.update_timing`,
   `fan3d.scene.camera_animation.remove`, and
   `fan3d.scene.camera_animation.insert_preset`
 - Verification: `fan3d.preview.render` and `fan3d.scene.validate`
@@ -76,6 +81,24 @@ On a project-scoped server, the open project is already bound and `projectID`
 is optional. Omit it normally; if supplied, it must match the bound project.
 Start with `fan3d.project.inspect`; do not switch to a different project or
 launch a separate global server behind the user's back.
+
+When the user requests a new project from a device, list the device catalog
+and use `fan3d.project.create_from_device` with the catalog-returned device,
+variant, and color IDs. Use `fan3d.project.create` only for an explicitly blank
+project with a user-specified canvas. Both creation tools are global-only.
+
+## Manage installation preferences and storage
+
+- These installation-scoped tools are available only on the global server;
+  they do not mutate `SceneDocument` or switch the current project.
+- Inspect preferences before updating them. Pass the returned revision as
+  `expectedRevision`, preserve the desired complete supported preference
+  state, and use a fresh `requestID`.
+- Inspect storage to report bounded aggregate counts and byte totals. It never
+  returns local paths or user-media contents.
+- Clear preview caches only when the user asks to reclaim or clear cache data.
+  This operation may remove only Fan3D-owned regenerable previews; it must not
+  be described as deleting projects, source assets, or render outputs.
 
 ## Ask for bounded choices
 
@@ -136,6 +159,25 @@ launch a separate global server behind the user's back.
    - Retain the returned `jobID` and poll `fan3d.render.status` at a reasonable
      interval until it reaches a terminal state.
    - Report an output URI only after the job succeeds.
+
+## Adjust camera-animation timing
+
+- Inspect the target camera clip first. Its summary reports the current
+  `durationSeconds`, named `easing`, and `jumpCut` state.
+- Use `fan3d.scene.camera_animation.update_timing` to change one or more of
+  those values. Duration is bounded to 0.1 through 10 seconds. Omitted fields
+  remain unchanged.
+- Named easing values are `jump`, `default`, `linear`, `in`, `out`, `in_out`,
+  and the `in_*`, `out_*`, or `in_out_*` variants for `sine`, `quad`, `cubic`,
+  `quart`, `quint`, `expo`, `circ`, and `back`.
+- The named `jump` easing and `jumpCut` are synchronized with Fan3D's timing
+  semantics.
+  Selecting Jump or enabling Jump Cut produces no interpolated motion.
+  Selecting another easing clears Jump Cut; disabling Jump Cut restores
+  Default when Jump was selected.
+- A duration increase may expand the canvas to contain the clip. Fan3D rejects
+  a timing update that would overlap another camera clip; inspect and re-plan
+  instead of moving another clip without the user's intent.
 
 ## Resource access
 
