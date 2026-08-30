@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "fan3d": {
+      "type": "stdio",
+      "command": "${CODEBUDDY_PLUGIN_ROOT}/bin/fan3d"
+    }
+  }
+}

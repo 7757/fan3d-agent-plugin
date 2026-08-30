@@ -1,0 +1,22 @@
+{
+  "name": "fan3d",
+  "version": "0.7.0",
+  "description": "Understand products and create, review, and render polished 3D product introductions with Fan3D.",
+  "author": {
+    "name": "Zhenjiang Xingfan Technology Co.,Ltd",
+    "url": "https://3d.fandcode.com/"
+  },
+  "homepage": "https://3d.fandcode.com/",
+  "repository": "https://github.com/7757/fan3d-agent-plugin",
+  "keywords": [
+    "fan3d",
+    "3d",
+    "animation",
+    "macos",
+    "rendering",
+    "product-introduction",
+    "product-video",
+    "app-demo",
+    "mcp"
+  ]
+}

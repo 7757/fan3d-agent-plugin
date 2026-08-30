@@ -1,0 +1,10 @@
+interface:
+  display_name: "Fan3D Product Introduction"
+  short_description: "Plan, create, and review any product introduction"
+  icon_small: "../../assets/composer-icon.png"
+  icon_large: "../../assets/logo.png"
+  brand_color: "#7C5CFF"
+  default_prompt: "Use $fan3d-product-introduction to understand my current product and create a compelling product introduction with Fan3D."
+
+policy:
+  allow_implicit_invocation: true

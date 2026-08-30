@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fan3d",
-  "version": "0.5.0",
-  "description": "Inspect, edit, preview, validate, and render local Fan3D 3D animation projects.",
+  "version": "0.7.0",
+  "description": "Understand products and create, review, and render polished 3D product introductions with Fan3D.",
   "author": {
     "name": "Zhenjiang Xingfan Technology Co.,Ltd",
     "url": "https://3d.fandcode.com/"
@@ -15,14 +15,17 @@
     "animation",
     "macos",
     "rendering",
+    "product-introduction",
+    "product-video",
+    "app-demo",
     "mcp"
   ],
   "extensions": {
     "com.openai": {
       "interface": {
         "displayName": "Fan3D",
-        "shortDescription": "Create and render 3D product animations",
-        "longDescription": "Inspect, edit, preview, validate, and render local Fan3D 3D animation projects with deterministic tools backed by the native macOS app.",
+        "shortDescription": "Create polished product introductions with Fan3D",
+        "longDescription": "Ground product claims in the user's current workspace, then plan, create, preview, validate, review, and render product introductions with deterministic tools backed by the native macOS app.",
         "developerName": "Zhenjiang Xingfan Technology Co.,Ltd",
         "category": "Creativity",
         "capabilities": [
@@ -31,7 +34,10 @@
         ],
         "websiteURL": "https://3d.fandcode.com/",
         "defaultPrompt": [
+          "Understand the current project, plan a compelling product introduction, create it with Fan3D, and review the result.",
           "Inspect a local Fan3D project and summarize its scene, revision, and validation state.",
+          "Show the current Fan3D background choices, help me choose one, apply it, and verify the result.",
+          "Show the current Fan3D choices for templates, devices, environments, music, cameras, labels, and output, then help me apply one.",
           "Edit a Fan3D project, render a preview, and verify the result.",
           "Render a final Fan3D animation and report job progress and output."
         ],
